@@ -28,9 +28,9 @@ func (i *V1User) Register(c echo.Context) (err error) {
 	)
 
 	data, err := uu.CreateUser(&userUsecase.ParamsCreateUser{
-		Name:     u.Name,
-		Email:    u.Email,
-		Password: u.Password,
+		Name:        u.Name,
+		PhoneNumber: u.PhoneNumber,
+		Password:    u.Password,
 	})
 
 	if err != nil {
@@ -48,8 +48,8 @@ func (i *V1User) Register(c echo.Context) (err error) {
 
 type (
 	createRequest struct {
-		Name     string `json:"name" validate:"required"`
-		Email    string `json:"email" validate:"required,email"`
-		Password string `json:"password" validate:"required"`
+		Name        string `json:"name" validate:"required,min=5,max=50"`
+		PhoneNumber string `json:"phoneNumber" validate:"required,min=10,max=16"`
+		Password    string `json:"password" validate:"required,min=5,max=15"`
 	}
 )

@@ -1,0 +1,64 @@
+package productv1controller
+
+import (
+	"net/http"
+
+	"github.com/BennoAlif/ps-cats-social/src/entities"
+	productrepository "github.com/BennoAlif/ps-cats-social/src/repositories/product"
+	productusecase "github.com/BennoAlif/ps-cats-social/src/usecase/product"
+	"github.com/labstack/echo/v4"
+)
+
+func (i *V1Product) Update(c echo.Context) (err error) {
+	u := new(createRequest)
+	id := c.Param("id")
+
+	if err = c.Bind(u); err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Status:  false,
+			Message: err.Error(),
+		})
+	}
+
+	if !ValidateRace(u.Category) {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Status:  false,
+			Message: "Invalid Category",
+		})
+	}
+
+	if err = c.Validate(u); err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Status:  false,
+			Message: err.Error(),
+		})
+	}
+
+	uu := productusecase.New(
+		productrepository.New(i.DB),
+	)
+
+	data, err := uu.Update(&id, &entities.ParamsUpdateProduct{
+		Name:        u.Name,
+		Sku:         u.Sku,
+		Category:    u.Category,
+		Notes:       u.Notes,
+		ImageUrl:    u.ImageUrl,
+		Price:       u.Price,
+		Stock:       u.Stock,
+		Location:    u.Location,
+		IsAvailable: u.IsAvailable,
+	})
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Status:  false,
+			Message: err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, SuccessResponse{
+		Message: "product updated successfully",
+		Data:    data,
+	})
+}

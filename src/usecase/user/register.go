@@ -10,25 +10,25 @@ import (
 
 type (
 	ParamsCreateUser struct {
-		Email    string
-		Name     string
-		Password string
+		PhoneNumber string
+		Name        string
+		Password    string
 	}
 )
 
 func (i *sUserUsecase) CreateUser(p *ParamsCreateUser) (*ResultLogin, error) {
 
-	checkEmail, _ := i.userRepository.FindByEmail(&p.Email)
+	checkPhoneNumber, _ := i.userRepository.FindByPhoneNumber(&p.PhoneNumber)
 
-	if checkEmail != nil {
-		return nil, ErrEmailAlreadyUsed
+	if checkPhoneNumber != nil {
+		return nil, ErrPhoneNumberAlreadyUsed
 	}
 
 	hashedPassword, _ := helpers.HashPassword(p.Password)
 	data, err := i.userRepository.Create(&userrepository.ParamsCreateUser{
-		Email:    p.Email,
-		Name:     p.Name,
-		Password: hashedPassword,
+		PhoneNumber: p.PhoneNumber,
+		Name:        p.Name,
+		Password:    hashedPassword,
 	})
 
 	paramsGenerateJWTRegister := helpers.ParamsGenerateJWT{
@@ -50,7 +50,7 @@ func (i *sUserUsecase) CreateUser(p *ParamsCreateUser) (*ResultLogin, error) {
 
 	return &ResultLogin{
 		Name:        p.Name,
-		Email:       p.Email,
+		PhoneNumber: p.PhoneNumber,
 		AccessToken: accessToken,
 	}, nil
 }

@@ -3,7 +3,7 @@ package userusecase
 import "errors"
 
 var ErrUserNotFound = errors.New("User tidak ditemukan")
-var ErrEmailAlreadyUsed = errors.New("Email sudah digunakan")
+var ErrPhoneNumberAlreadyUsed = errors.New("Phone Number sudah digunakan")
 var ErrInvalidPassword = errors.New("Password salah")
 var ErrInvalidToken = errors.New("Token tidak valid")
 var ErrExpiredToken = errors.New("Token kadaluwarsa")

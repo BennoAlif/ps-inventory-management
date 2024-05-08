@@ -19,6 +19,7 @@ func (*V1Routes) MoungUser() {
 type iV1Routes interface {
 	MountPing()
 	MountUser()
+	MountProduct()
 }
 
 func New(v1Routes *V1Routes) iV1Routes {

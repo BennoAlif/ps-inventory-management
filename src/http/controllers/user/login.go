@@ -28,8 +28,8 @@ func (i *V1User) Login(c echo.Context) (err error) {
 	)
 
 	data, err := uu.Login(&userUsecase.ParamsLogin{
-		Email:    u.Email,
-		Password: u.Password,
+		PhoneNumber: u.PhoneNumber,
+		Password:    u.Password,
 	})
 
 	if err != nil {
@@ -47,7 +47,7 @@ func (i *V1User) Login(c echo.Context) (err error) {
 
 type (
 	loginRequest struct {
-		Email    string `json:"email" validate:"required,email"`
-		Password string `json:"password" validate:"required"`
+		Password    string `json:"password" validate:"required"`
+		PhoneNumber string `json:"phone_number" validate:"required"`
 	}
 )

@@ -8,15 +8,15 @@ import (
 
 type (
 	ParamsLogin struct {
-		Email    string
-		Password string
+		PhoneNumber string
+		Password    string
 	}
 	GeneratedToken struct {
 		Token     string `json:"token"`
 		ExpiredAt int64  `json:"expired_at"`
 	}
 	ResultLogin struct {
-		Email       string `json:"email"`
+		PhoneNumber string `json:"phoneNumber"`
 		Name        string `json:"name"`
 		AccessToken string `json:"accessToken"`
 	}
@@ -24,12 +24,12 @@ type (
 
 func (i *sUserUsecase) Login(p *ParamsLogin) (*ResultLogin, error) {
 
-	emailMx := helpers.ValidateMx(p.Email)
+	emailMx := helpers.IsValidPhoneNumber(p.PhoneNumber)
 
 	if emailMx != nil {
 		return nil, emailMx
 	}
-	user, _ := i.userRepository.FindByEmail(&p.Email)
+	user, _ := i.userRepository.FindByPhoneNumber(&p.PhoneNumber)
 
 	if user == nil {
 		return nil, ErrInvalidUser
@@ -54,7 +54,7 @@ func (i *sUserUsecase) Login(p *ParamsLogin) (*ResultLogin, error) {
 
 	return &ResultLogin{
 		Name:        user.Name,
-		Email:       p.Email,
+		PhoneNumber: p.PhoneNumber,
 		AccessToken: accessToken,
 	}, nil
 }
