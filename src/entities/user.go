@@ -11,7 +11,6 @@ type User struct {
 	Password    string    `json:"-"`
 	Token       string    `json:"token"`
 	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
 	ExpiredAt   time.Time `json:"-"`
 }
 

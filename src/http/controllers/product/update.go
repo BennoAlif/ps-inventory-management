@@ -38,7 +38,7 @@ func (i *V1Product) Update(c echo.Context) (err error) {
 		productrepository.New(i.DB),
 	)
 
-	data, err := uu.Update(&id, &entities.ParamsUpdateProduct{
+	err = uu.Update(&id, &entities.ParamsUpdateProduct{
 		Name:        u.Name,
 		Sku:         u.Sku,
 		Category:    u.Category,
@@ -51,6 +51,12 @@ func (i *V1Product) Update(c echo.Context) (err error) {
 	})
 
 	if err != nil {
+		if err == productusecase.ErrProductNotFound {
+			return c.JSON(http.StatusNotFound, ErrorResponse{
+				Status:  false,
+				Message: err.Error(),
+			})
+		}
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
 			Status:  false,
 			Message: err.Error(),
@@ -59,6 +65,6 @@ func (i *V1Product) Update(c echo.Context) (err error) {
 
 	return c.JSON(http.StatusOK, SuccessResponse{
 		Message: "product updated successfully",
-		Data:    data,
+		Data:    nil,
 	})
 }

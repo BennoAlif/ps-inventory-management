@@ -14,7 +14,7 @@ type ProductRepository interface {
 	Create(*entities.ParamsCreateProduct) (*entities.CreateProduct, error)
 	FindMany(*entities.ProductSearchFilter) ([]*entities.Product, error)
 	IsExists(*entities.ProductSearchFilter) (bool, error)
-	Update(*string, *entities.ParamsUpdateProduct) (*entities.CreateProduct, error)
+	Update(*string, *entities.ParamsUpdateProduct) error
 	Delete(*string) error
 }
 

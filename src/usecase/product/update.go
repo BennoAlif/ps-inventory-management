@@ -1,12 +1,10 @@
 package productusecase
 
 import (
-	"time"
-
 	"github.com/BennoAlif/ps-cats-social/src/entities"
 )
 
-func (i *sProductUsecase) Update(productId *string, p *entities.ParamsUpdateProduct) (*ResultCreate, error) {
+func (i *sProductUsecase) Update(productId *string, p *entities.ParamsUpdateProduct) error {
 	filters := entities.ProductSearchFilter{
 		ID: *productId,
 	}
@@ -14,10 +12,10 @@ func (i *sProductUsecase) Update(productId *string, p *entities.ParamsUpdateProd
 	product, _ := i.productRepository.IsExists(&filters)
 
 	if !product {
-		return nil, ErrProductNotFound
+		return ErrProductNotFound
 	}
 
-	data, err := i.productRepository.Update(productId,
+	err := i.productRepository.Update(productId,
 		&entities.ParamsUpdateProduct{
 			Name:        p.Name,
 			Sku:         p.Sku,
@@ -32,12 +30,9 @@ func (i *sProductUsecase) Update(productId *string, p *entities.ParamsUpdateProd
 	)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &ResultCreate{
-		ID:        data.ID,
-		CreatedAt: data.CreatedAt.Format(time.RFC3339),
-	}, nil
+	return nil
 
 }

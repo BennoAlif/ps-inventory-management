@@ -18,6 +18,12 @@ func (i *V1Product) Delete(c echo.Context) (err error) {
 	err = uu.Delete(&id)
 
 	if err != nil {
+		if err == productusecase.ErrProductNotFound {
+			return c.JSON(http.StatusNotFound, ErrorResponse{
+				Status:  false,
+				Message: err.Error(),
+			})
+		}
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
 			Status:  false,
 			Message: err.Error(),
