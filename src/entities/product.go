@@ -43,7 +43,6 @@ type ParamsCreateProduct struct {
 	Name        string
 	Sku         string
 	Category    string
-	Description string
 	ImageUrl    string
 	Notes       string
 	Price       int

@@ -1,6 +1,7 @@
 package productrepository
 
 import (
+	"fmt"
 	"log"
 	"reflect"
 	"strconv"
@@ -23,7 +24,7 @@ func (i *sProductRepository) FindMany(filters *entities.ProductSearchFilter) ([]
 			params = append(params, filters.ID)
 		}
 		if filters.Name != "" {
-			query += "AND name = $" + strconv.Itoa(len(params)+1)
+			query += "AND name ILIKE '%' || $" + strconv.Itoa(len(params)+1) + " || '%'"
 			params = append(params, filters.Name)
 		}
 		if filters.IsAvailable != nil && (filters.IsAvailable == true || filters.IsAvailable == false) {
@@ -34,12 +35,10 @@ func (i *sProductRepository) FindMany(filters *entities.ProductSearchFilter) ([]
 			query += "AND category = $" + strconv.Itoa(len(params)+1)
 			params = append(params, filters.Category)
 		}
-		if filters.SKU != "" {
-			query += "AND sku = $" + strconv.Itoa(len(params)+1)
-			params = append(params, filters.SKU)
-		}
-		if filters.InStock != nil && (filters.IsAvailable == true) {
+		if filters.InStock != nil && filters.InStock.(bool) {
 			query += "AND stock > 0"
+		} else if filters.InStock != nil && !filters.InStock.(bool) {
+			query += "AND stock = 0"
 		}
 
 		if len(conditions) > 0 {
@@ -56,15 +55,15 @@ func (i *sProductRepository) FindMany(filters *entities.ProductSearchFilter) ([]
 	sortingStr := []string{}
 
 	if filters.CreatedAt == "asc" {
-		sortingStr = append(sortingStr, "created_at ASC")
+		sortingStr = append(sortingStr, " created_at ASC")
 	} else if filters.CreatedAt == "desc" {
-		sortingStr = append(sortingStr, "created_at DESC")
+		sortingStr = append(sortingStr, " created_at DESC")
 	}
 
 	if filters.Price == "asc" {
-		sortingStr = append(sortingStr, "price ASC")
+		sortingStr = append(sortingStr, " price ASC")
 	} else if filters.Price == "desc" {
-		sortingStr = append(sortingStr, "price DESC")
+		sortingStr = append(sortingStr, " price DESC")
 	}
 
 	if len(sortingStr) > 0 {
@@ -82,6 +81,8 @@ func (i *sProductRepository) FindMany(filters *entities.ProductSearchFilter) ([]
 		params = append(params, filters.Offset)
 	}
 
+	fmt.Println(query)
+
 	rows, err := i.DB.Query(query, params...)
 	if err != nil {
 		log.Printf("Error finding cat: %s", err)
@@ -89,19 +90,19 @@ func (i *sProductRepository) FindMany(filters *entities.ProductSearchFilter) ([]
 	}
 	defer rows.Close()
 
-	cats := make([]*entities.Product, 0)
+	products := make([]*entities.Product, 0)
 	for rows.Next() {
 		c := new(entities.Product)
 		err := rows.Scan(&c.ID, &c.Name, &c.SKU, &c.Category, &c.ImageUrl, &c.Stock, &c.Notes, &c.Price, &c.Location, &c.IsAvailable, &c.CreatedAt)
 		if err != nil {
 			return nil, err
 		}
-		cats = append(cats, c)
+		products = append(products, c)
 	}
 
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
 
-	return cats, nil
+	return products, nil
 }

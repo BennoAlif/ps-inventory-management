@@ -29,10 +29,10 @@ func (i *V1Product) Create(c echo.Context) (err error) {
 	uid := new(meValidator)
 	mapstructure.Decode(c.Get("user"), &uid)
 
-	if !ValidateRace(u.Category) {
+	if !ValidateCategory(u.Category) {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
 			Status:  false,
-			Message: "Invalid race",
+			Message: "Invalid category",
 		})
 	}
 
@@ -51,13 +51,12 @@ func (i *V1Product) Create(c echo.Context) (err error) {
 		Name:        u.Name,
 		Sku:         u.Sku,
 		Category:    u.Category,
-		Description: u.Description,
 		ImageUrl:    u.ImageUrl,
 		Notes:       u.Notes,
 		Price:       u.Price,
-		Stock:       u.Stock,
+		Stock:       *u.Stock,
 		Location:    u.Location,
-		IsAvailable: u.IsAvailable,
+		IsAvailable: *u.IsAvailable,
 	})
 
 	if err != nil {
@@ -77,18 +76,17 @@ type (
 	createRequest struct {
 		Name        string `json:"name" validate:"required,min=1,max=30"`
 		Sku         string `json:"sku" validate:"required,min=1,max=30"`
-		Category    string `json:"category" validate:"required"`
-		Description string `json:"description" validate:"required,min=1,max=200"`
-		ImageUrl    string `json:"imageUrs" validate:"required,url"`
+		Category    string `json:"category" validate:"required,oneof=Clothing Accessories Footwear Beverages"`
+		ImageUrl    string `json:"imageUrl" validate:"required,url"`
 		Notes       string `json:"notes" validate:"required,min=1,max=200"`
 		Price       int    `json:"price" validate:"required,min=1"`
-		Stock       int    `json:"stock" validate:"required,min=0,max=100000"`
+		Stock       *int   `json:"stock" validate:"required,min=0,max=100000"`
 		Location    string `json:"location" validate:"required,min=1,max=200"`
-		IsAvailable bool   `json:"isAvailable" validate:"required,oneof=true false"`
+		IsAvailable *bool  `json:"isAvailable" validate:"required"`
 	}
 )
 
-func ValidateRace(race string) bool {
+func ValidateCategory(race string) bool {
 	validCategory := map[string]bool{
 		"Clothing":    true,
 		"Accessories": true,

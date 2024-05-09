@@ -50,24 +50,16 @@ func (i *V1Product) Get(c echo.Context) (err error) {
 	// isAvailable
 	if isAvailableStr := c.QueryParam("isAvailable"); isAvailableStr != "" {
 		isAvailable, err := strconv.ParseBool(isAvailableStr)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, ErrorResponse{
-				Status:  false,
-				Message: "Invalid value for 'isAvailable'",
-			})
+		if err == nil {
+			filters.IsAvailable = isAvailable
 		}
-		filters.IsAvailable = isAvailable
 	}
 
 	// category
 	if category := c.QueryParam("category"); category != "" {
-		if !isValidCategory(category) {
-			return c.JSON(http.StatusBadRequest, ErrorResponse{
-				Status:  false,
-				Message: "Invalid value for 'category'",
-			})
+		if isValidCategory(category) {
+			filters.Category = category
 		}
-		filters.Category = category
 	}
 
 	// sku
@@ -77,36 +69,24 @@ func (i *V1Product) Get(c echo.Context) (err error) {
 
 	// price
 	if price := c.QueryParam("price"); price != "" {
-		if price != "asc" && price != "desc" {
-			return c.JSON(http.StatusBadRequest, ErrorResponse{
-				Status:  false,
-				Message: "Invalid value for 'price'",
-			})
+		if price == "asc" || price == "desc" {
+			filters.Price = price
 		}
-		filters.Price = price
 	}
 
 	// inStock
 	if inStockStr := c.QueryParam("inStock"); inStockStr != "" {
 		inStock, err := strconv.ParseBool(inStockStr)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, ErrorResponse{
-				Status:  false,
-				Message: "Invalid value for 'inStock'",
-			})
+		if err == nil {
+			filters.InStock = inStock
 		}
-		filters.InStock = inStock
 	}
 
 	// createdAt
 	if createdAt := c.QueryParam("createdAt"); createdAt != "" {
-		if createdAt != "asc" && createdAt != "desc" {
-			return c.JSON(http.StatusBadRequest, ErrorResponse{
-				Status:  false,
-				Message: "Invalid value for 'createdAt'",
-			})
+		if createdAt == "asc" || createdAt == "desc" {
+			filters.CreatedAt = createdAt
 		}
-		filters.CreatedAt = createdAt
 	}
 
 	uu := productusecase.New(

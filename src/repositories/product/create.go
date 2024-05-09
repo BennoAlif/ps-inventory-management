@@ -10,14 +10,14 @@ import (
 func (i *sProductRepository) Create(p *entities.ParamsCreateProduct) (*entities.CreateProduct, error) {
 	var id string
 	var createdAt time.Time
-	err := i.DB.QueryRow("INSERT INTO products (id, name, sku, category, image_url, notes, price, location, is_available) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, created_at",
-		p.ID,
+	err := i.DB.QueryRow("INSERT INTO products (name, sku, category, image_url, notes, price, stock, location, is_available) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, created_at",
 		p.Name,
 		p.Sku,
 		p.Category,
 		p.ImageUrl,
 		p.Notes,
-		p.ImageUrl,
+		p.Price,
+		p.Stock,
 		p.Location,
 		p.IsAvailable,
 	).Scan(&id, &createdAt)

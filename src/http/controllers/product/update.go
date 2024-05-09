@@ -20,7 +20,7 @@ func (i *V1Product) Update(c echo.Context) (err error) {
 		})
 	}
 
-	if !ValidateRace(u.Category) {
+	if !ValidateCategory(u.Category) {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
 			Status:  false,
 			Message: "Invalid Category",
@@ -45,9 +45,9 @@ func (i *V1Product) Update(c echo.Context) (err error) {
 		Notes:       u.Notes,
 		ImageUrl:    u.ImageUrl,
 		Price:       u.Price,
-		Stock:       u.Stock,
+		Stock:       *u.Stock,
 		Location:    u.Location,
-		IsAvailable: u.IsAvailable,
+		IsAvailable: *u.IsAvailable,
 	})
 
 	if err != nil {
