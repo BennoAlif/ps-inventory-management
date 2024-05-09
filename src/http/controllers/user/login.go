@@ -20,7 +20,10 @@ func (i *V1User) Login(c echo.Context) (err error) {
 	}
 
 	if err = c.Validate(u); err != nil {
-		return err
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Status:  false,
+			Message: err.Error(),
+		})
 	}
 
 	uu := userUsecase.New(

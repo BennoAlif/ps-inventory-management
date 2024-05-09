@@ -20,6 +20,7 @@ type iV1Routes interface {
 	MountPing()
 	MountUser()
 	MountProduct()
+	MountCustomer()
 }
 
 func New(v1Routes *V1Routes) iV1Routes {
