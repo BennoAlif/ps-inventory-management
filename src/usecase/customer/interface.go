@@ -11,6 +11,7 @@ type sCustomerUsecase struct {
 
 type CustomerUsecase interface {
 	Create(*entities.ParamsCreateCustomer) (*entities.ResultCreateCustomer, error)
+	FindMany(*entities.ParamsCustomer) ([]*entities.Customer, error)
 }
 
 func New(

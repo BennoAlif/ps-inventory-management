@@ -12,8 +12,8 @@ type sCustomerRepository struct {
 
 type CustomerRepository interface {
 	Create(*entities.ParamsCreateCustomer) (*entities.Customer, error)
-	// FindMany(*entities.ParamsFindManyCustomer) ([]*entities.Customer, error)
-	IsExists(*entities.FiltersCustomer) (bool, error)
+	FindMany(*entities.ParamsCustomer) ([]*entities.Customer, error)
+	IsExists(*entities.ParamsCustomer) (bool, error)
 }
 
 func New(db *sql.DB) CustomerRepository {

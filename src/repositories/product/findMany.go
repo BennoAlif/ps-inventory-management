@@ -35,6 +35,10 @@ func (i *sProductRepository) FindMany(filters *entities.ProductSearchFilter) ([]
 			query += "AND category = $" + strconv.Itoa(len(params)+1)
 			params = append(params, filters.Category)
 		}
+		if filters.SKU != "" {
+			query += "AND sku = $" + strconv.Itoa(len(params)+1)
+			params = append(params, filters.SKU)
+		}
 		if filters.InStock != nil && filters.InStock.(bool) {
 			query += "AND stock > 0"
 		} else if filters.InStock != nil && !filters.InStock.(bool) {
@@ -85,7 +89,7 @@ func (i *sProductRepository) FindMany(filters *entities.ProductSearchFilter) ([]
 
 	rows, err := i.DB.Query(query, params...)
 	if err != nil {
-		log.Printf("Error finding cat: %s", err)
+		log.Printf("Error finding product: %s", err)
 		return nil, err
 	}
 	defer rows.Close()

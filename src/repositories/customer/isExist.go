@@ -8,14 +8,14 @@ import (
 	"github.com/BennoAlif/ps-cats-social/src/entities"
 )
 
-func (i *sCustomerRepository) IsExists(filters *entities.FiltersCustomer) (bool, error) {
+func (i *sCustomerRepository) IsExists(filters *entities.ParamsCustomer) (bool, error) {
 	var sb strings.Builder
 	var params []interface{}
 	var conditions []string
 
 	sb.WriteString("SELECT EXISTS (SELECT 1 FROM customers WHERE ")
 
-	if filters.ID != 0 {
+	if filters.ID != "" {
 		params = append(params, filters.ID)
 		conditions = append(conditions, "id = $"+strconv.FormatInt(int64(len(params)), 10))
 	}

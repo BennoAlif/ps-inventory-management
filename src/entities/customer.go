@@ -22,8 +22,8 @@ type ResultCreateCustomer struct {
 	Name        string `json:"name"`
 }
 
-type FiltersCustomer struct {
-	ID          int64
+type ParamsCustomer struct {
+	ID          string
 	Name        string
 	PhoneNumber string
 }

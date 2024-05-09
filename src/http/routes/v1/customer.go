@@ -12,6 +12,7 @@ func (i *V1Routes) MountCustomer() {
 		DB: i.DB,
 	})
 
+	g.GET("", customerController.Get, middlewares.Authentication())
 	g.POST("/register", customerController.Create, middlewares.Authentication())
 
 }

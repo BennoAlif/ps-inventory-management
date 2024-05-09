@@ -13,7 +13,7 @@ func (i *sCustomerUsecase) Create(p *entities.ParamsCreateCustomer) (*entities.R
 		return nil, emailMx
 	}
 
-	filters := entities.FiltersCustomer{
+	filters := entities.ParamsCustomer{
 		PhoneNumber: p.PhoneNumber,
 	}
 
