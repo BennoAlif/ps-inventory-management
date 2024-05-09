@@ -33,6 +33,12 @@ func (i *V1User) Login(c echo.Context) (err error) {
 	})
 
 	if err != nil {
+		if err == userUsecase.ErrUserNotFound {
+			return c.JSON(http.StatusNotFound, ErrorResponse{
+				Status:  false,
+				Message: err.Error(),
+			})
+		}
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
 			Status:  false,
 			Message: err.Error(),
@@ -48,6 +54,6 @@ func (i *V1User) Login(c echo.Context) (err error) {
 type (
 	loginRequest struct {
 		Password    string `json:"password" validate:"required"`
-		PhoneNumber string `json:"phone_number" validate:"required"`
+		PhoneNumber string `json:"phoneNumber" validate:"required"`
 	}
 )

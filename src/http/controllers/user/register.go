@@ -3,6 +3,7 @@ package userv1controller
 import (
 	"net/http"
 
+	"github.com/BennoAlif/ps-cats-social/src/helpers"
 	userUsecase "github.com/BennoAlif/ps-cats-social/src/usecase/user"
 	"github.com/labstack/echo/v4"
 
@@ -34,6 +35,12 @@ func (i *V1User) Register(c echo.Context) (err error) {
 	})
 
 	if err != nil {
+		if err == helpers.ErrBadFormatPhoneNumber {
+			return c.JSON(http.StatusBadRequest, ErrorResponse{
+				Status:  false,
+				Message: err.Error(),
+			})
+		}
 		return c.JSON(http.StatusConflict, ErrorResponse{
 			Status:  false,
 			Message: err.Error(),

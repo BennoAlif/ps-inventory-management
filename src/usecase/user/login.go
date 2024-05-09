@@ -2,7 +2,9 @@ package userusecase
 
 import (
 	"os"
+	"strconv"
 
+	"github.com/BennoAlif/ps-cats-social/src/entities"
 	"github.com/BennoAlif/ps-cats-social/src/helpers"
 )
 
@@ -16,6 +18,7 @@ type (
 		ExpiredAt int64  `json:"expired_at"`
 	}
 	ResultLogin struct {
+		ID          string `json:"userId"`
 		PhoneNumber string `json:"phoneNumber"`
 		Name        string `json:"name"`
 		AccessToken string `json:"accessToken"`
@@ -29,10 +32,15 @@ func (i *sUserUsecase) Login(p *ParamsLogin) (*ResultLogin, error) {
 	if emailMx != nil {
 		return nil, emailMx
 	}
-	user, _ := i.userRepository.FindByPhoneNumber(&p.PhoneNumber)
+
+	filters := entities.ParamsCreateUser{
+		PhoneNumber: p.PhoneNumber,
+	}
+
+	user, _ := i.userRepository.FindOne(&filters)
 
 	if user == nil {
-		return nil, ErrInvalidUser
+		return nil, ErrUserNotFound
 	}
 
 	paramsGenerateJWTLogin := helpers.ParamsGenerateJWT{
@@ -53,6 +61,7 @@ func (i *sUserUsecase) Login(p *ParamsLogin) (*ResultLogin, error) {
 	}
 
 	return &ResultLogin{
+		ID:          strconv.FormatInt(user.ID, 10),
 		Name:        user.Name,
 		PhoneNumber: p.PhoneNumber,
 		AccessToken: accessToken,

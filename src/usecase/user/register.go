@@ -2,7 +2,9 @@ package userusecase
 
 import (
 	"os"
+	"strconv"
 
+	"github.com/BennoAlif/ps-cats-social/src/entities"
 	"github.com/BennoAlif/ps-cats-social/src/helpers"
 
 	userrepository "github.com/BennoAlif/ps-cats-social/src/repositories/user"
@@ -18,13 +20,24 @@ type (
 
 func (i *sUserUsecase) CreateUser(p *ParamsCreateUser) (*ResultLogin, error) {
 
-	checkPhoneNumber, _ := i.userRepository.FindByPhoneNumber(&p.PhoneNumber)
+	emailMx := helpers.IsValidPhoneNumber(p.PhoneNumber)
 
-	if checkPhoneNumber != nil {
+	if emailMx != nil {
+		return nil, emailMx
+	}
+
+	filters := entities.ParamsCreateUser{
+		PhoneNumber: p.PhoneNumber,
+	}
+
+	checkPhoneNumber, _ := i.userRepository.IsExists(&filters)
+
+	if checkPhoneNumber {
 		return nil, ErrPhoneNumberAlreadyUsed
 	}
 
 	hashedPassword, _ := helpers.HashPassword(p.Password)
+
 	data, err := i.userRepository.Create(&userrepository.ParamsCreateUser{
 		PhoneNumber: p.PhoneNumber,
 		Name:        p.Name,
@@ -34,7 +47,6 @@ func (i *sUserUsecase) CreateUser(p *ParamsCreateUser) (*ResultLogin, error) {
 	paramsGenerateJWTRegister := helpers.ParamsGenerateJWT{
 		ExpiredInMinute: 480,
 		UserId:          data.ID,
-		Role:            data.Role,
 		SecretKey:       os.Getenv("JWT_SECRET"),
 	}
 
@@ -49,6 +61,7 @@ func (i *sUserUsecase) CreateUser(p *ParamsCreateUser) (*ResultLogin, error) {
 	}
 
 	return &ResultLogin{
+		ID:          strconv.FormatInt(data.ID, 10),
 		Name:        p.Name,
 		PhoneNumber: p.PhoneNumber,
 		AccessToken: accessToken,

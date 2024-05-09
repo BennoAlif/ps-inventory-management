@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"os"
@@ -8,7 +9,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func CreateConnection() *sql.DB {
+func CreateConnection() (*sql.DB, error) {
 	dbUsername := os.Getenv("DB_USERNAME")
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbHost := os.Getenv("DB_HOST")
@@ -17,16 +18,24 @@ func CreateConnection() *sql.DB {
 	dbParams := os.Getenv("DB_PARAMS")
 
 	strConnection := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?%s", dbUsername, dbPassword, dbHost, dbPort, dbName, dbParams)
+
+	maxOpenConns := 20
+	maxIdleConns := 10
+
 	db, err := sql.Open("postgres", strConnection)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	err = db.Ping()
+	db.SetMaxOpenConns(maxOpenConns)
+	db.SetMaxIdleConns(maxIdleConns)
 
+	ctx := context.Background()
+	err = db.PingContext(ctx)
 	if err != nil {
-		panic(err)
+		db.Close()
+		return nil, err
 	}
 
-	return db
+	return db, nil
 }

@@ -17,6 +17,7 @@ func (i *Http) Launch() {
 	e.Validator = &helpers.CustomValidator{Validator: validator.New()}
 	e.HTTPErrorHandler = helpers.ErrorHandler
 	e.Pre(middleware.RemoveTrailingSlash())
+	e.Use(middleware.Logger())
 	e.Use(middleware.Secure())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{

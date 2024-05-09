@@ -13,7 +13,7 @@ func (i *V1Routes) MountPing() {
 	})
 
 	g.GET("", pingController.Ping)
-	g.GET("/auth", pingController.PingAuth, middlewares.Authentication([]string{}))
-	g.GET("/customer", pingController.PingAuth, middlewares.Authentication([]string{"CUSTOMER"}))
-	g.GET("/sales", pingController.PingAuth, middlewares.Authentication([]string{"STAFF"}))
+	g.GET("/auth", pingController.PingAuth, middlewares.Authentication())
+	g.GET("/customer", pingController.PingAuth, middlewares.Authentication())
+	g.GET("/sales", pingController.PingAuth, middlewares.Authentication())
 }

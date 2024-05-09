@@ -16,8 +16,7 @@ type (
 
 func (i *sUserRepository) Create(p *ParamsCreateUser) (*entities.User, error) {
 	var id int64
-	role := "STAFF"
-	err := i.DB.QueryRow("INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id", p.Name, p.PhoneNumber, role, p.Password).Scan(&id)
+	err := i.DB.QueryRow("INSERT INTO users (name, phone_number, password) VALUES ($1, $2, $3) RETURNING id", p.Name, p.PhoneNumber, p.Password).Scan(&id)
 	if err != nil {
 		log.Printf("Error inserting user: %s", err)
 		return nil, err
@@ -27,7 +26,6 @@ func (i *sUserRepository) Create(p *ParamsCreateUser) (*entities.User, error) {
 		ID:          id,
 		Name:        p.Name,
 		PhoneNumber: p.PhoneNumber,
-		Role:        role,
 	}
 
 	return user, nil

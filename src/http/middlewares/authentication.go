@@ -16,7 +16,7 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
-func Authentication(role []string) echo.MiddlewareFunc {
+func Authentication() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			token := strings.Replace(c.Request().Header.Get("Authorization"), "Bearer ", "", -1)
@@ -41,24 +41,11 @@ func Authentication(role []string) echo.MiddlewareFunc {
 			}
 
 			user := make(map[string]interface{})
-			userRole := new(roleValidator)
 			mapstructure.Decode(claims, &user)
-			mapstructure.Decode(claims, &userRole)
-
-			if len(role) > 0 && !helpers.Contains(role, userRole.Role) {
-				return c.JSON(http.StatusUnauthorized, ErrorResponse{
-					Status:  false,
-					Message: "Unauthorized",
-				})
-			}
 
 			c.Set("user", user)
 
 			return next(c)
 		}
 	}
-}
-
-type roleValidator struct {
-	Role string `mapstructure:"role" validate:"required"`
 }

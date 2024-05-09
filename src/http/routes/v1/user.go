@@ -5,7 +5,7 @@ import (
 )
 
 func (i *V1Routes) MountUser() {
-	g := i.Echo.Group("/user")
+	g := i.Echo.Group("/staff")
 
 	userController := userv1controller.New(&userv1controller.V1User{
 		DB: i.DB,

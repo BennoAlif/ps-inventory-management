@@ -10,7 +10,7 @@ func (i *V1Routes) MountProduct() {
 	productController := productv1controller.New(&productv1controller.V1Product{
 		DB: i.DB,
 	})
-	authMiddleware := middlewares.Authentication([]string{"STAFF"})
+	authMiddleware := middlewares.Authentication()
 
 	g.POST("", productController.Create, authMiddleware)
 	g.GET("", productController.Get, authMiddleware)
