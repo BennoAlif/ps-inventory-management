@@ -25,6 +25,7 @@ type iV1Product interface {
 	Get(c echo.Context) error
 	Update(c echo.Context) error
 	Delete(c echo.Context) error
+	Checkout(c echo.Context) error
 }
 
 func New(v1Product *V1Product) iV1Product {

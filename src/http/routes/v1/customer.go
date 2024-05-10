@@ -14,5 +14,4 @@ func (i *V1Routes) MountCustomer() {
 
 	g.GET("", customerController.Get, middlewares.Authentication())
 	g.POST("/register", customerController.Create, middlewares.Authentication())
-	g.POST("/checkout", customerController.Checkout, middlewares.Authentication())
 }

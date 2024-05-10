@@ -1,4 +1,4 @@
-package customerv1controller
+package productv1controller
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (i *V1Customer) Checkout(c echo.Context) (err error) {
+func (i *V1Product) Checkout(c echo.Context) (err error) {
 	u := new(entities.ParamsCustomerCheckout)
 
 	if err = c.Bind(u); err != nil {
