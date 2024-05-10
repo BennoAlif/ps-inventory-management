@@ -5,9 +5,9 @@ import (
 )
 
 type Customer struct {
-	ID          int64     `json:"id"`
+	ID          int64     `json:"userId"`
 	Name        string    `json:"name"`
-	PhoneNumber string    `json:"phone_number"`
+	PhoneNumber string    `json:"phoneNumber"`
 	CreatedAt   time.Time `json:"created_at"`
 }
 
