@@ -73,6 +73,8 @@ func (i *sProductRepository) FindMany(filters *entities.ProductSearchFilter) ([]
 	if len(sortingStr) > 0 {
 		sortingQuery += strings.Join(sortingStr, ", ")
 		query += sortingQuery
+	} else {
+		query += " ORDER BY created_at DESC"
 	}
 
 	query += " LIMIT $" + strconv.Itoa(len(params)+1)

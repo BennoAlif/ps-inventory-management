@@ -13,10 +13,32 @@ func (i *V1Product) Update(c echo.Context) (err error) {
 	u := new(createRequest)
 	id := c.Param("id")
 
+	uu := productusecase.New(
+		productrepository.New(i.DB),
+	)
+
+	err = uu.IsExist(&id)
+
+	if err != nil {
+		if err == productusecase.ErrProductNotFound {
+			return c.JSON(http.StatusNotFound, ErrorResponse{
+				Status:  false,
+				Message: err.Error(),
+			})
+		}
+	}
+
 	if err = c.Bind(u); err != nil {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
 			Status:  false,
 			Message: err.Error(),
+		})
+	}
+
+	if !isValidURL(u.ImageUrl) {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Status:  false,
+			Message: "Invalid image URL",
 		})
 	}
 
@@ -33,10 +55,6 @@ func (i *V1Product) Update(c echo.Context) (err error) {
 			Message: err.Error(),
 		})
 	}
-
-	uu := productusecase.New(
-		productrepository.New(i.DB),
-	)
 
 	err = uu.Update(&id, &entities.ParamsUpdateProduct{
 		Name:        u.Name,

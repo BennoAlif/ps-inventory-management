@@ -12,6 +12,7 @@ type sProductUsecase struct {
 type ProductUsecase interface {
 	Create(*entities.ParamsCreateProduct) (*ResultCreate, error)
 	FindMany(*entities.ProductSearchFilter) ([]*entities.Product, error)
+	IsExist(*string) error
 	Update(*string, *entities.ParamsUpdateProduct) error
 	Delete(*string) error
 }
