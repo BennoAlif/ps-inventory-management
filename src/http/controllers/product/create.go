@@ -2,6 +2,7 @@ package productv1controller
 
 import (
 	"net/http"
+	"regexp"
 
 	"github.com/BennoAlif/ps-cats-social/src/entities"
 	productrepository "github.com/BennoAlif/ps-cats-social/src/repositories/product"
@@ -40,6 +41,13 @@ func (i *V1Product) Create(c echo.Context) (err error) {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
 			Status:  false,
 			Message: err.Error(),
+		})
+	}
+
+	if !isValidURL(u.ImageUrl) {
+		return c.JSON(http.StatusBadRequest, ErrorResponse{
+			Status:  false,
+			Message: "Invalid image URL",
 		})
 	}
 
@@ -96,4 +104,10 @@ func ValidateCategory(race string) bool {
 
 	_, ok := validCategory[race]
 	return ok
+}
+
+func isValidURL(url string) bool {
+	// Define the regex pattern
+	var urlRegex = regexp.MustCompile(`^(http|https)://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(/[a-zA-Z0-9-._~:?#@!$&'()*+,;=]*)*$`)
+	return urlRegex.MatchString(url)
 }
