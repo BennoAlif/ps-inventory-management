@@ -1,5 +1,4 @@
--- Create the table for orders
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
     id SERIAL PRIMARY KEY,
     customer_id INT NOT NULL,
     paid INT NOT NULL CHECK (paid >= 1),
@@ -8,8 +7,7 @@ CREATE TABLE orders (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create the table for order details (products ordered in each order)
-CREATE TABLE order_details (
+CREATE TABLE IF NOT EXISTS order_details (
     order_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity INT NOT NULL CHECK (quantity >= 1),
