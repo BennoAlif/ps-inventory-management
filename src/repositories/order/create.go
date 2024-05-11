@@ -2,6 +2,7 @@ package orderepository
 
 import (
 	"log"
+	"sort"
 
 	"github.com/BennoAlif/ps-cats-social/src/entities"
 )
@@ -45,6 +46,12 @@ func (i *sOrderRepository) Create(params *entities.ParamsCustomerCheckout) error
 		return err
 	}
 
+	// Sort product details by ProductID
+	sort.Slice(params.ProductDetails, func(i, j int) bool {
+		return params.ProductDetails[i].ProductID < params.ProductDetails[j].ProductID
+	})
+
+	// Then proceed with your existing code
 	for _, detail := range params.ProductDetails {
 		_, err = stmt2.Exec(id, detail.ProductID, detail.Quantity)
 		if err != nil {
