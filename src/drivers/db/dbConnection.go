@@ -19,8 +19,8 @@ func CreateConnection() (*sql.DB, error) {
 
 	strConnection := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?%s", dbUsername, dbPassword, dbHost, dbPort, dbName, dbParams)
 
-	maxOpenConns := 20
-	maxIdleConns := 10
+	maxOpenConns := 80
+	maxIdleConns := 20
 
 	db, err := sql.Open("postgres", strConnection)
 	if err != nil {
