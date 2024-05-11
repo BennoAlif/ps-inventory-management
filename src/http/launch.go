@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/BennoAlif/ps-cats-social/src/helpers"
 	v1routes "github.com/BennoAlif/ps-cats-social/src/http/routes/v1"
@@ -25,11 +24,6 @@ func (i *Http) Launch() {
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
 	}))
-
-	timeoutMiddleware := middleware.ContextTimeoutWithConfig(middleware.ContextTimeoutConfig{
-		Timeout: 30 * time.Second,
-	})
-	e.Use(timeoutMiddleware)
 
 	basePath := "/v1"
 	baseUrl := e.Group(basePath)
