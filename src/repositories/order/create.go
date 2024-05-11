@@ -2,6 +2,7 @@ package orderepository
 
 import (
 	"log"
+	"sort"
 
 	"github.com/BennoAlif/ps-cats-social/src/entities"
 )
@@ -24,8 +25,12 @@ func (i *sOrderRepository) Create(params *entities.ParamsCustomerCheckout) error
 		return err
 	}
 
-	query = `INSERT INTO order_details (order_id, product_id, quantity) VALUES ($1, $2, $3)`
+	sort.Slice(params.ProductDetails, func(i, j int) bool {
+		return params.ProductDetails[i].ProductID < params.ProductDetails[j].ProductID
+	})
+
 	for _, detail := range params.ProductDetails {
+		query = `INSERT INTO order_details (order_id, product_id, quantity) VALUES ($1, $2, $3)`
 		_, err = tx.Exec(query, id, detail.ProductID, detail.Quantity)
 		if err != nil {
 			log.Printf("Error inserting order detail: %s", err)
@@ -35,7 +40,7 @@ func (i *sOrderRepository) Create(params *entities.ParamsCustomerCheckout) error
 	}
 
 	for _, detail := range params.ProductDetails {
-		query = `UPDATE products SET stock = stock - $1 WHERE id = $2`
+		query = `UPDATE products SET stock = GREATEST(stock - $1, 0) WHERE id = $2`
 		_, err = tx.Exec(query, detail.Quantity, detail.ProductID)
 		if err != nil {
 			log.Printf("Error decreasing product quantity: %s", err)
