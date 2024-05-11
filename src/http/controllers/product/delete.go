@@ -3,6 +3,7 @@ package productv1controller
 import (
 	"net/http"
 
+	customerrepository "github.com/BennoAlif/ps-cats-social/src/repositories/customer"
 	orderrepository "github.com/BennoAlif/ps-cats-social/src/repositories/order"
 	productrepository "github.com/BennoAlif/ps-cats-social/src/repositories/product"
 	productusecase "github.com/BennoAlif/ps-cats-social/src/usecase/product"
@@ -15,6 +16,7 @@ func (i *V1Product) Delete(c echo.Context) (err error) {
 	uu := productusecase.New(
 		productrepository.New(i.DB),
 		orderrepository.New(i.DB),
+		customerrepository.New(i.DB),
 	)
 
 	err = uu.Delete(&id)

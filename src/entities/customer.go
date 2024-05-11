@@ -22,10 +22,19 @@ type ProductDetails struct {
 }
 
 type ParamsCustomerCheckout struct {
+	TransactionID  string           `json:"transactionId"`
 	CustomerID     string           `json:"customerId" validate:"required"`
 	ProductDetails []ProductDetails `json:"productDetails" validate:"required,min=1,dive"`
 	Paid           int              `json:"paid" validate:"required,min=1"`
 	Change         *int             `json:"change" validate:"required,min=0"`
+	CreatedAt      time.Time        `json:"createdAt"`
+}
+
+type SearchOrderFilter struct {
+	CustomerID string
+	Limit      int
+	Offset     int
+	CreatedAt  string
 }
 
 type ResultCreateCustomer struct {

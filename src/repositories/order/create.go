@@ -9,6 +9,7 @@ import (
 func (i *sOrderRepository) Create(params *entities.ParamsCustomerCheckout) error {
 	tx, err := i.DB.Begin()
 	if err != nil {
+		log.Printf("Error starting transaction: %s", err)
 		return err
 	}
 
@@ -21,6 +22,16 @@ func (i *sOrderRepository) Create(params *entities.ParamsCustomerCheckout) error
 		log.Printf("Error inserting order: %s", err)
 		tx.Rollback()
 		return err
+	}
+
+	query = `INSERT INTO order_details (order_id, product_id, quantity) VALUES ($1, $2, $3)`
+	for _, detail := range params.ProductDetails {
+		_, err = tx.Exec(query, id, detail.ProductID, detail.Quantity)
+		if err != nil {
+			log.Printf("Error inserting order detail: %s", err)
+			tx.Rollback()
+			return err
+		}
 	}
 
 	for _, detail := range params.ProductDetails {

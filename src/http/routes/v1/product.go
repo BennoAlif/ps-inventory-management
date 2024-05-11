@@ -18,4 +18,5 @@ func (i *V1Routes) MountProduct() {
 	g.PUT("/:id", productController.Update, authMiddleware)
 	g.DELETE("/:id", productController.Delete, authMiddleware)
 	g.POST("/checkout", productController.Checkout, middlewares.Authentication())
+	g.GET("/checkout/history", productController.History, middlewares.Authentication())
 }

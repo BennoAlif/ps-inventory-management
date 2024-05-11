@@ -12,7 +12,7 @@ type sOrderUsecase struct {
 
 type OrderUsecase interface {
 	Create(*entities.ParamsCustomerCheckout) error
-	// FindMany(*entities.OrderSearchFilter) ([]*entities.Order, error)
+	FindMany(*entities.SearchOrderFilter) ([]*entities.ParamsCustomerCheckout, error)
 }
 
 func New(orderRepository orderepository.OrderRepository) OrderUsecase {

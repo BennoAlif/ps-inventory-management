@@ -12,7 +12,7 @@ type sOrderRepository struct {
 
 type OrderRepository interface {
 	Create(*entities.ParamsCustomerCheckout) error
-	// FindMany(*entities.OrderSearchFilter) ([]*entities.Order, error)
+	FindMany(*entities.SearchOrderFilter) ([]*entities.ParamsCustomerCheckout, error)
 }
 
 func New(db *sql.DB) OrderRepository {

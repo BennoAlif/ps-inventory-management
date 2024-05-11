@@ -7,6 +7,14 @@ import (
 )
 
 func (i *sProductUsecase) Checkout(p *entities.ParamsCustomerCheckout) error {
+	customerExist, _ := i.cusrtomerRepository.IsExists(&entities.ParamsCustomer{
+		ID: p.CustomerID,
+	})
+
+	if !customerExist {
+		return ErrCustomerNotFound
+	}
+
 	var productIDs []*string
 
 	for _, detail := range p.ProductDetails {
