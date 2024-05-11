@@ -8,32 +8,23 @@ import (
 )
 
 func (i *sOrderRepository) Create(params *entities.ParamsCustomerCheckout) error {
-	tx, err := i.DB.Begin()
-	if err != nil {
-		log.Printf("Error starting transaction: %s", err)
-		return err
-	}
-
-	stmt1, err := tx.Prepare(`INSERT INTO orders (customer_id, paid, "change") VALUES ($1, $2, $3) RETURNING id`)
+	stmt1, err := i.DB.Prepare(`INSERT INTO orders (customer_id, paid, "change") VALUES ($1, $2, $3) RETURNING id`)
 	if err != nil {
 		log.Printf("Error preparing order insert: %s", err)
-		tx.Rollback()
 		return err
 	}
 	defer stmt1.Close()
 
-	stmt2, err := tx.Prepare(`INSERT INTO order_details (order_id, product_id, quantity) VALUES ($1, $2, $3)`)
+	stmt2, err := i.DB.Prepare(`INSERT INTO order_details (order_id, product_id, quantity) VALUES ($1, $2, $3)`)
 	if err != nil {
 		log.Printf("Error preparing order detail insert: %s", err)
-		tx.Rollback()
 		return err
 	}
 	defer stmt2.Close()
 
-	stmt3, err := tx.Prepare(`UPDATE products SET stock = stock - LEAST(stock, $1) WHERE id = $2`)
+	stmt3, err := i.DB.Prepare(`UPDATE products SET stock = stock - LEAST(stock, $1) WHERE id = $2`)
 	if err != nil {
 		log.Printf("Error preparing product update: %s", err)
-		tx.Rollback()
 		return err
 	}
 	defer stmt3.Close()
@@ -42,7 +33,6 @@ func (i *sOrderRepository) Create(params *entities.ParamsCustomerCheckout) error
 	err = stmt1.QueryRow(params.CustomerID, params.Paid, *params.Change).Scan(&id)
 	if err != nil {
 		log.Printf("Error inserting order: %s", err)
-		tx.Rollback()
 		return err
 	}
 
@@ -56,7 +46,6 @@ func (i *sOrderRepository) Create(params *entities.ParamsCustomerCheckout) error
 		_, err = stmt2.Exec(id, detail.ProductID, detail.Quantity)
 		if err != nil {
 			log.Printf("Error inserting order detail: %s", err)
-			tx.Rollback()
 			return err
 		}
 	}
@@ -65,16 +54,8 @@ func (i *sOrderRepository) Create(params *entities.ParamsCustomerCheckout) error
 		_, err = stmt3.Exec(detail.Quantity, detail.ProductID)
 		if err != nil {
 			log.Printf("Error decreasing product quantity: %s", err)
-			tx.Rollback()
 			return err
 		}
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		log.Printf("Error committing transaction 4: %s", err)
-		tx.Rollback()
-		return err
 	}
 
 	return nil
