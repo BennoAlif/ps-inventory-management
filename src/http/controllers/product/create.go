@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/BennoAlif/ps-cats-social/src/entities"
+	orderrepository "github.com/BennoAlif/ps-cats-social/src/repositories/order"
 	productrepository "github.com/BennoAlif/ps-cats-social/src/repositories/product"
 	productusecase "github.com/BennoAlif/ps-cats-social/src/usecase/product"
 	"github.com/labstack/echo/v4"
@@ -53,6 +54,7 @@ func (i *V1Product) Create(c echo.Context) (err error) {
 
 	uu := productusecase.New(
 		productrepository.New(i.DB),
+		orderrepository.New(i.DB),
 	)
 
 	data, err := uu.Create(&entities.ParamsCreateProduct{

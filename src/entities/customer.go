@@ -5,7 +5,7 @@ import (
 )
 
 type Customer struct {
-	ID          int64     `json:"userId"`
+	ID          string    `json:"userId"`
 	Name        string    `json:"name"`
 	PhoneNumber string    `json:"phoneNumber"`
 	CreatedAt   time.Time `json:"created_at"`
@@ -17,19 +17,19 @@ type ParamsCreateCustomer struct {
 }
 
 type ProductDetails struct {
-	ProductId string `json:"productId" validate:"required"`
-	Quantity  int    `json:"quantity" validate:"required"`
+	ProductID string `json:"productId" validate:"required"`
+	Quantity  int    `json:"quantity" validate:"required,min=1"`
 }
 
 type ParamsCustomerCheckout struct {
-	CustomerId     string         `json:"customerId" validate:"required"`
-	ProductDetails ProductDetails `json:"productDetails"`
-	Paid           int            `json:"paid" validate:"required,min=1"`
-	Change         int            `json:"change" validate:"required,min=0"`
+	CustomerID     string           `json:"customerId" validate:"required"`
+	ProductDetails []ProductDetails `json:"productDetails" validate:"required,min=1,dive"`
+	Paid           int              `json:"paid" validate:"required,min=1"`
+	Change         *int             `json:"change" validate:"required,min=0"`
 }
 
 type ResultCreateCustomer struct {
-	ID          int64  `json:"userId"`
+	ID          string `json:"userId"`
 	PhoneNumber string `json:"phoneNumber"`
 	Name        string `json:"name"`
 }

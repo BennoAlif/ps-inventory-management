@@ -2,6 +2,7 @@ package customerrepository
 
 import (
 	"log"
+	"strconv"
 
 	"github.com/BennoAlif/ps-cats-social/src/entities"
 )
@@ -15,7 +16,7 @@ func (i *sCustomerRepository) Create(p *entities.ParamsCreateCustomer) (*entitie
 	}
 
 	customer := &entities.Customer{
-		ID:          id,
+		ID:          strconv.FormatInt(id, 10),
 		Name:        p.Name,
 		PhoneNumber: p.PhoneNumber,
 	}

@@ -1,7 +1,6 @@
 package customerrepository
 
 import (
-	"fmt"
 	"log"
 	"reflect"
 	"strconv"
@@ -39,7 +38,6 @@ func (i *sCustomerRepository) FindMany(filters *entities.ParamsCustomer) ([]*ent
 		}
 		query += strings.Join(conditions, " AND ")
 	}
-	fmt.Println(query, params)
 	rows, err := i.DB.Query(query, params...)
 	if err != nil {
 		log.Printf("Error finding customer: %s", err)

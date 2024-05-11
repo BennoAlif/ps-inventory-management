@@ -4,8 +4,9 @@ import (
 	"net/http"
 
 	"github.com/BennoAlif/ps-cats-social/src/entities"
-	customerrepository "github.com/BennoAlif/ps-cats-social/src/repositories/customer"
-	customerUsecase "github.com/BennoAlif/ps-cats-social/src/usecase/customer"
+	orderrepository "github.com/BennoAlif/ps-cats-social/src/repositories/order"
+	productrepository "github.com/BennoAlif/ps-cats-social/src/repositories/product"
+	productusecase "github.com/BennoAlif/ps-cats-social/src/usecase/product"
 	"github.com/labstack/echo/v4"
 )
 
@@ -26,9 +27,42 @@ func (i *V1Product) Checkout(c echo.Context) (err error) {
 		})
 	}
 
-	_ = customerUsecase.New(
-		customerrepository.New(i.DB),
+	uu := productusecase.New(
+		productrepository.New(i.DB),
+		orderrepository.New(i.DB),
 	)
+
+	err = uu.Checkout(u)
+	if err != nil {
+		if err == productusecase.ErrProductNotFound {
+			return c.JSON(http.StatusNotFound, ErrorResponse{
+				Status:  false,
+				Message: err.Error(),
+			})
+		}
+		if err == productusecase.ErrTotalPriceNotMatch {
+			return c.JSON(http.StatusBadRequest, ErrorResponse{
+				Status:  false,
+				Message: err.Error(),
+			})
+		}
+		if err == productusecase.ErrChangeNotMatch {
+			return c.JSON(http.StatusBadRequest, ErrorResponse{
+				Status:  false,
+				Message: err.Error(),
+			})
+		}
+		if err == productusecase.ErrStockNotAvailable {
+			return c.JSON(http.StatusBadRequest, ErrorResponse{
+				Status:  false,
+				Message: err.Error(),
+			})
+		}
+	}
+
+	// _ = customerUsecase.New(
+	// 	customerrepository.New(i.DB),
+	// )
 
 	// data, err := cu.Create(u)
 
@@ -45,7 +79,7 @@ func (i *V1Product) Checkout(c echo.Context) (err error) {
 	// 	})
 	// }
 
-	return c.JSON(http.StatusCreated, SuccessResponse{
+	return c.JSON(http.StatusOK, SuccessResponse{
 		Message: "successfully checkout product",
 		// Data:    interface{},
 	})

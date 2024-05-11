@@ -1,7 +1,6 @@
 package productrepository
 
 import (
-	"fmt"
 	"log"
 	"reflect"
 	"strconv"
@@ -86,8 +85,6 @@ func (i *sProductRepository) FindMany(filters *entities.ProductSearchFilter) ([]
 		query += " OFFSET $" + strconv.Itoa(len(params)+1)
 		params = append(params, filters.Offset)
 	}
-
-	fmt.Println(query)
 
 	rows, err := i.DB.Query(query, params...)
 	if err != nil {
