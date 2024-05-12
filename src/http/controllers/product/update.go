@@ -73,13 +73,13 @@ func (i *V1Product) Update(c echo.Context) (err error) {
 	})
 
 	if err != nil {
-		if err == productusecase.ErrProductNotFound {
-			return c.JSON(http.StatusNotFound, ErrorResponse{
-				Status:  false,
-				Message: err.Error(),
-			})
-		}
-		return c.JSON(http.StatusBadRequest, ErrorResponse{
+		// if err == productusecase.ErrProductNotFound {
+		// 	return c.JSON(http.StatusNotFound, ErrorResponse{
+		// 		Status:  false,
+		// 		Message: err.Error(),
+		// 	})
+		// }
+		return c.JSON(http.StatusNotFound, ErrorResponse{
 			Status:  false,
 			Message: err.Error(),
 		})
