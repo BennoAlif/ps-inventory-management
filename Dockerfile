@@ -10,4 +10,5 @@ RUN go build -o server ./src/main.go
 
 FROM scratch
 COPY --from=builder /app/server /server
+EXPOSE 8080
 ENTRYPOINT ["/server"]
