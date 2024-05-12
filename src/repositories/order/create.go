@@ -14,6 +14,14 @@ func (i *sOrderRepository) Create(params *entities.ParamsCustomerCheckout) error
 		return err
 	}
 
+	stmt3, err := tx.Prepare(`UPDATE products SET stock = stock - LEAST(stock, $1) WHERE id = $2`)
+	if err != nil {
+		log.Printf("Error preparing product update: %s", err)
+		tx.Rollback()
+		return err
+	}
+	defer stmt3.Close()
+
 	stmt1, err := tx.Prepare(`INSERT INTO orders (customer_id, paid, "change") VALUES ($1, $2, $3) RETURNING id`)
 	if err != nil {
 		log.Printf("Error preparing order insert: %s", err)
@@ -30,13 +38,14 @@ func (i *sOrderRepository) Create(params *entities.ParamsCustomerCheckout) error
 	}
 	defer stmt2.Close()
 
-	stmt3, err := tx.Prepare(`UPDATE products SET stock = stock - LEAST(stock, $1) WHERE id = $2`)
-	if err != nil {
-		log.Printf("Error preparing product update: %s", err)
-		tx.Rollback()
-		return err
+	for _, detail := range params.ProductDetails {
+		_, err = stmt3.Exec(detail.Quantity, detail.ProductID)
+		if err != nil {
+			log.Printf("Error decreasing product quantity: %s", err)
+			tx.Rollback()
+			return err
+		}
 	}
-	defer stmt3.Close()
 
 	var id int
 	err = stmt1.QueryRow(params.CustomerID, params.Paid, *params.Change).Scan(&id)
@@ -56,15 +65,6 @@ func (i *sOrderRepository) Create(params *entities.ParamsCustomerCheckout) error
 		_, err = stmt2.Exec(id, detail.ProductID, detail.Quantity)
 		if err != nil {
 			log.Printf("Error inserting order detail: %s", err)
-			tx.Rollback()
-			return err
-		}
-	}
-
-	for _, detail := range params.ProductDetails {
-		_, err = stmt3.Exec(detail.Quantity, detail.ProductID)
-		if err != nil {
-			log.Printf("Error decreasing product quantity: %s", err)
 			tx.Rollback()
 			return err
 		}
