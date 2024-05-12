@@ -2,8 +2,6 @@ package entities
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Product struct {
@@ -39,7 +37,7 @@ type ProductSearchFilter struct {
 }
 
 type ParamsCreateProduct struct {
-	ID          uuid.UUID
+	ID          string
 	Name        string
 	Sku         string
 	Category    string

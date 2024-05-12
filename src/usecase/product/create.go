@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/BennoAlif/ps-cats-social/src/entities"
-	"github.com/google/uuid"
 )
 
 type (
@@ -15,9 +14,7 @@ type (
 )
 
 func (i *sProductUsecase) Create(p *entities.ParamsCreateProduct) (*ResultCreate, error) {
-	newID := uuid.New()
 	data, err := i.productRepository.Create(&entities.ParamsCreateProduct{
-		ID:          newID,
 		Name:        p.Name,
 		Sku:         p.Sku,
 		Category:    p.Category,
