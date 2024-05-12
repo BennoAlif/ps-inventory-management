@@ -21,16 +21,16 @@ func (i *V1Product) Update(c echo.Context) (err error) {
 		customerrepository.New(i.DB),
 	)
 
-	err = uu.IsExist(&id)
+	// err = uu.IsExist(&id)
 
-	if err != nil {
-		if err == productusecase.ErrProductNotFound {
-			return c.JSON(http.StatusNotFound, ErrorResponse{
-				Status:  false,
-				Message: err.Error(),
-			})
-		}
-	}
+	// if err != nil {
+	// 	if err == productusecase.ErrProductNotFound {
+	// 		return c.JSON(http.StatusNotFound, ErrorResponse{
+	// 			Status:  false,
+	// 			Message: err.Error(),
+	// 		})
+	// 	}
+	// }
 
 	if err = c.Bind(u); err != nil {
 		return c.JSON(http.StatusBadRequest, ErrorResponse{
