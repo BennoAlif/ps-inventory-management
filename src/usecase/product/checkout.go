@@ -35,14 +35,14 @@ func (i *sProductUsecase) Checkout(p *entities.ParamsCustomerCheckout) error {
 		return err
 	}
 
-	exists, err := i.CheckStockAvailability(productDetails)
-	if err != nil {
-		return err
-	}
+	// exists, err := i.CheckStockAvailability(productDetails)
+	// if err != nil {
+	// 	return err
+	// }
 
-	if !exists {
-		return ErrStockNotAvailable
-	}
+	// if !exists {
+	// 	return ErrStockNotAvailable
+	// }
 
 	totalPrice, err := i.TotalPrice(p.ProductDetails)
 	if err != nil {
